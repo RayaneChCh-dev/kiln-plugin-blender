@@ -27,6 +27,17 @@ _DETAIL = {
 }
 
 
+# A numeric field wider than this is not a menu: it stays a plain option in the sidebar.
+_MAX_RANGE_CHOICES = 60
+
+
+def _whole_numbers(field):
+    if field.get("kind") not in ("INT", "FLOAT") or not {"minimum", "maximum"} <= field.keys():
+        return []
+    low, high = math.ceil(field["minimum"]), math.floor(field["maximum"])
+    return list(range(low, high + 1)) if high - low < _MAX_RANGE_CHOICES else []
+
+
 class Control:
     def __init__(self, key, label, choices=(), description=""):
         self.key, self.label, self.description = key, label, description
@@ -38,14 +49,15 @@ class Control:
 
 
 class _DynamicControl(Control):
-    """Choices are the model's own enum values (durations, video resolutions)."""
+    """Choices are the model's own values: an enum, or each whole number of a numeric range (Kling 4: 3 to 30)."""
 
     def __init__(self, key, label, field, unit="", description=""):
         super().__init__(key, label, description=description)
         self.field, self.unit = field, unit
 
     def choices(self, fields, entry):
-        options = fields.get(self.field, {}).get("options") or []
+        field = fields.get(self.field, {})
+        options = field.get("options") or _whole_numbers(field)
         return [(str(v), f"{str(v).rstrip('s')} {self.unit}".strip() if self.unit else str(v))
                 for v in options if str(v) != AUTO]
 
@@ -91,7 +103,7 @@ def fields_of(schema):
 
 
 def _option(fields, name, value):
-    """{name: value} when the field exists and accepts value (enum option, or any bool)."""
+    """{name: value} when the field exists and accepts value (enum option, any bool, number in range)."""
     field = fields.get(name)
     if field is None:
         return None
@@ -100,6 +112,13 @@ def _option(fields, name, value):
         return None if match is None else {name: match}
     if field["kind"] == "BOOL" and isinstance(value, bool):
         return {name: value}
+    if field["kind"] in ("INT", "FLOAT") and not isinstance(value, bool):
+        try:
+            number = float(value)
+        except (TypeError, ValueError):
+            return None
+        in_range = field.get("minimum", -math.inf) <= number <= field.get("maximum", math.inf)
+        return {name: int(number) if number.is_integer() else number} if in_range else None
     return None
 
 
@@ -168,7 +187,7 @@ def _apply(key, value, fields, entry, choices=None):
     if key in ("duration",):
         return _option(fields, "duration", value)
     if key == "audio":
-        return _option(fields, "generate_audio", value == "on")
+        return _option(fields, "generate_audio", value == "on") or _option(fields, "audio", value == "on")
     return None
 
 

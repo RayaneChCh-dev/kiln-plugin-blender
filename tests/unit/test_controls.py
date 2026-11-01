@@ -98,6 +98,42 @@ def test_video_durations_and_resolutions_come_from_the_model():
     assert veo == {"duration": "6s", "resolution": "1080p", "generate_audio": False, "aspect_ratio": "9:16"}
 
 
+def test_numeric_durations_become_whole_second_choices():
+    assert choices_of("video", "duration", "kling_v4_text-to-video") == [str(n) for n in range(3, 31)]
+    assert choices_of("video", "duration", "minimax_h3-max_text-to-video") == [str(n) for n in range(1, 16)]
+    kling = schema("kling_v4_text-to-video")
+    assert controls.resolve("video", {"duration": "12"}, kling, {}) == {"duration": 12}
+    assert controls.resolve("video", {"duration": "31"}, kling, {}) == {}
+    assert controls.resolve("video", {"duration": "not a number"}, kling, {}) == {}
+
+
+def test_a_huge_numeric_range_is_not_a_menu():
+    fields = {"duration": {"name": "duration", "kind": "INT", "minimum": 1, "maximum": 1000}}
+    assert next(c for c in controls.controls("video") if c.key == "duration").choices(fields, {}) == []
+
+
+def test_audio_field_names():
+    assert controls.resolve("video", {"audio": "off"}, schema("alibaba_wan-3.0-prime_text-to-video"), {}) == {
+        "audio": False}
+    assert controls.resolve("video", {"audio": "off"}, schema("bytedance_seedance-2.5_text-to-video"), {}) == {
+        "generate_audio": False}
+
+
+@pytest.mark.parametrize(("key", "max_area", "multiple_of"), [
+    ("seedream5_pro", 4_624_220, 16), ("seedream5_flash", 4_624_220, 16), ("gpt_image_25_sunburst", 8_294_400, 16),
+    ("gpt_image_25_flare", 8_294_400, 16), ("qwen_image3", 2048 ** 2, 1), ("krea3", 4_220_160, 16),
+    ("flux3_klein", 16_777_216, 16),
+])
+def test_resolution_chip_stays_within_each_models_size_limits(key, max_area, multiple_of):
+    model = entry("image", key)
+    data = schema(model["text"].replace("/", "_"))
+    for resolution in model.get("resolutions", ("1K", "2K", "4K")):
+        for ratio in ("1:1", "16:9", "9:16", "4:3", "3:4"):
+            size = controls.resolve("image", {"resolution": resolution, "aspect": ratio}, data, model)["image_size"]
+            assert size["width"] * size["height"] <= max_area, (resolution, ratio, size)
+            assert size["width"] % multiple_of == size["height"] % multiple_of == 0
+
+
 def test_a_value_the_new_model_lacks_is_dropped():
     # 15 s is fine on Kling 3, not on Kling 2.5 Turbo: nothing is sent instead of an invalid value
     assert controls.resolve("video", {"duration": "15"},

@@ -200,7 +200,7 @@ def _model_label(context, mode):
     if mode == "assets":
         return dict(library.FILTERS)[props.lib_filter] if _mine(context) else dict(ASSET_KINDS)[props.ph_kind]
     if mode == "animation":
-        return "Hunyuan Motion"
+        return presets.motion_model(props.motion_model)["label"]
     entry = getattr(props, f"{SLOT_OF_MODE[mode]}_model").entry()
     return entry.get("bar_label", entry["label"]) if entry else "Choose a model"
 
@@ -240,7 +240,7 @@ def _info(context, mode):
     if _needs_fal(context, mode) and not prefs.fal_key():
         return "Add fal.ai key", gfx.DANGER, "prefs"
     if mode == "animation":
-        return f"Price: {presets.MOTION_COST}", gfx.TEXT_DIM, None
+        return f"Price: {presets.motion_model(context.scene.free_plugin.motion_model)['cost']}", gfx.TEXT_DIM, None
     entry = getattr(context.scene.free_plugin, f"{SLOT_OF_MODE[mode]}_model").entry() or {}
     cost = entry.get("cost")
     return (f"Price: {cost}" if cost else "Price: see fal.ai"), gfx.TEXT_DIM, None
@@ -338,7 +338,7 @@ def _usage_short():
 
 def _price(context, mode):
     if mode == "animation":
-        return presets.MOTION_COST
+        return presets.motion_model(context.scene.free_plugin.motion_model)["cost"]
     if mode in SLOT_OF_MODE:
         entry = getattr(context.scene.free_plugin, f"{SLOT_OF_MODE[mode]}_model").entry() or {}
         return entry.get("cost") or "price: see fal.ai"
@@ -1189,6 +1189,8 @@ class FREEPLUGIN_OT_overlay_set(bpy.types.Operator):
             api_models.choose(self.value)
         elif self.target == "duration":
             props.motion_duration = float(self.value)
+        elif self.target == "motion_model":
+            props.motion_model = self.value
         elif self.target == "kind":
             props.ph_kind = self.value
             props.ph_results.clear()
@@ -1345,7 +1347,11 @@ class FREEPLUGIN_MT_overlay_model(bpy.types.Menu):
                 op.target, op.value = "kind", key
             return
         if mode == "animation":
-            layout.label(text=f"Hunyuan Motion   {presets.MOTION_COST}", icon="CHECKMARK")
+            current = context.scene.free_plugin.motion_model
+            for key, label, cost, _ in presets.MOTION_MODELS:
+                op = layout.operator("freeplugin.overlay_set", text=f"{label}   {cost}",
+                                     icon="CHECKMARK" if key == current else "BLANK1")
+                op.target, op.value = "motion_model", key
             layout.separator()
             layout.label(text="Presets: sidebar (N) › Free Plugin › Animation", icon="INFO")
             return

@@ -1,0 +1,55 @@
+{
+ "id": "bytedance/seedream/v5/flash/edit",
+ "prompt_field": "prompt",
+ "image_field": "image_urls",
+ "image_list": true,
+ "fields": [
+  {
+   "name": "image_size",
+   "title": "Image Size",
+   "kind": "ENUM",
+   "description": "The size of the generated image. Total pixels must be between 921600 and 4624220, with aspect ratio between 1/16 and 16.",
+   "options": [
+    "square_hd",
+    "square",
+    "portrait_4_3",
+    "portrait_16_9",
+    "landscape_4_3",
+    "landscape_16_9",
+    "auto_1K",
+    "auto_1.5K",
+    "auto_2K"
+   ],
+   "default": "auto_2K"
+  },
+  {
+   "name": "output_format",
+   "title": "Output Format",
+   "kind": "ENUM",
+   "description": "The file format of the generated image.",
+   "options": [
+    "jpeg",
+    "png"
+   ],
+   "default": "jpeg"
+  },
+  {
+   "name": "watermark",
+   "title": "Watermark",
+   "kind": "BOOL",
+   "description": "Whether to add the provider's visible watermark.",
+   "default": false
+  },
+  {
+   "name": "background",
+   "title": "Background",
+   "kind": "ENUM",
+   "description": "Use `transparent` with exactly one alpha-channel reference and PNG output to preserve transparency.",
+   "options": [
+    "opaque",
+    "transparent"
+   ],
+   "default": "opaque"
+  }
+ ]
+}

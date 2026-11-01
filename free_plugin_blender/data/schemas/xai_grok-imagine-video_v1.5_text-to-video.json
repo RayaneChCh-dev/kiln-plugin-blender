@@ -1,0 +1,45 @@
+{
+ "id": "xai/grok-imagine-video/v1.5/text-to-video",
+ "prompt_field": "prompt",
+ "image_field": null,
+ "image_list": false,
+ "fields": [
+  {
+   "name": "duration",
+   "title": "Duration",
+   "kind": "INT",
+   "description": "Video duration in seconds.",
+   "minimum": 1,
+   "maximum": 15,
+   "default": 6
+  },
+  {
+   "name": "resolution",
+   "title": "Resolution",
+   "kind": "ENUM",
+   "description": "Resolution of the output video.",
+   "options": [
+    "480p",
+    "720p",
+    "1080p"
+   ],
+   "default": "720p"
+  },
+  {
+   "name": "aspect_ratio",
+   "title": "Aspect Ratio",
+   "kind": "ENUM",
+   "description": "Aspect ratio of the generated video.",
+   "options": [
+    "16:9",
+    "4:3",
+    "3:2",
+    "1:1",
+    "2:3",
+    "3:4",
+    "9:16"
+   ],
+   "default": "16:9"
+  }
+ ]
+}

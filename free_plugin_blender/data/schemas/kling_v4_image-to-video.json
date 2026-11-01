@@ -1,0 +1,28 @@
+{
+ "id": "kling/v4/image-to-video",
+ "prompt_field": "prompt",
+ "image_field": "start_image_url",
+ "image_list": false,
+ "fields": [
+  {
+   "name": "duration",
+   "title": "Duration",
+   "kind": "INT",
+   "description": "Video duration in seconds (3-30).",
+   "minimum": 3,
+   "maximum": 30,
+   "default": 5
+  },
+  {
+   "name": "resolution",
+   "title": "Resolution",
+   "kind": "ENUM",
+   "description": "Output resolution.",
+   "options": [
+    "720p",
+    "1080p"
+   ],
+   "default": "1080p"
+  }
+ ]
+}

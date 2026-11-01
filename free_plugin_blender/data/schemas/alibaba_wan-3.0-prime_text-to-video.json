@@ -1,0 +1,73 @@
+{
+ "id": "alibaba/wan-3.0-prime/text-to-video",
+ "prompt_field": "prompt",
+ "image_field": null,
+ "image_list": false,
+ "fields": [
+  {
+   "name": "resolution",
+   "title": "Resolution",
+   "kind": "ENUM",
+   "description": "Output video resolution tier.",
+   "options": [
+    "480p",
+    "720p",
+    "1080p"
+   ],
+   "default": "1080p"
+  },
+  {
+   "name": "aspect_ratio",
+   "title": "Aspect Ratio",
+   "kind": "ENUM",
+   "description": "Output aspect ratio, or adaptive selection.",
+   "options": [
+    "adaptive",
+    "16:9",
+    "4:3",
+    "1:1",
+    "3:4",
+    "9:16"
+   ],
+   "default": "adaptive"
+  },
+  {
+   "name": "duration",
+   "title": "Duration",
+   "kind": "INT",
+   "description": "Output duration in seconds. Set to null for smart duration, which lets the model pick a length from the prompt and reference media.",
+   "minimum": 2,
+   "maximum": 30,
+   "default": 5
+  },
+  {
+   "name": "audio",
+   "title": "Audio",
+   "kind": "BOOL",
+   "description": "Include generated audio.",
+   "default": true
+  },
+  {
+   "name": "enable_prompt_expansion",
+   "title": "Enable Prompt Expansion",
+   "kind": "BOOL",
+   "description": "Enable intelligent prompt rewriting. Disabling it can save roughly 20-60 seconds of latency but is likely to degrade generation quality.",
+   "default": true
+  },
+  {
+   "name": "enable_thinking",
+   "title": "Enable Thinking",
+   "kind": "BOOL",
+   "description": "Enable enhanced reasoning before generation.",
+   "default": false
+  },
+  {
+   "name": "seed",
+   "title": "Seed",
+   "kind": "INT",
+   "description": "",
+   "minimum": 0,
+   "maximum": 2147483647
+  }
+ ]
+}

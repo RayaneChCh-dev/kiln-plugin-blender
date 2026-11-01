@@ -1,0 +1,47 @@
+{
+ "id": "blackforestlabs/flux-3/klein/edit-image",
+ "prompt_field": "prompt",
+ "image_field": "image_urls",
+ "image_list": true,
+ "fields": [
+  {
+   "name": "enable_prompt_expansion",
+   "title": "Enable Prompt Expansion",
+   "kind": "BOOL",
+   "description": "If set to true, the prompt is expanded into a detailed caption (grounded in the reference images when editing) before generation.",
+   "default": true
+  },
+  {
+   "name": "seed",
+   "title": "Seed",
+   "kind": "INT",
+   "description": "The same seed and the same prompt given to the same version of the model will output the same image every time."
+  },
+  {
+   "name": "output_format",
+   "title": "Output Format",
+   "kind": "ENUM",
+   "description": "The format of the generated image.",
+   "options": [
+    "jpeg",
+    "png",
+    "webp"
+   ],
+   "default": "png"
+  },
+  {
+   "name": "image_size",
+   "title": "Image Size",
+   "kind": "ENUM",
+   "description": "The size of the generated image, 256 to 4096 pixels per side. If not set, a single reference image's own size (scaled to at most 4 megapixels) is used, or the first reference image's size (at most 1 megapixel) when several are given.",
+   "options": [
+    "square_hd",
+    "square",
+    "portrait_4_3",
+    "portrait_16_9",
+    "landscape_4_3",
+    "landscape_16_9"
+   ]
+  }
+ ]
+}

@@ -141,6 +141,10 @@ class FreePluginProps(bpy.types.PropertyGroup):
     anim_results: bpy.props.CollectionProperty(type=FreePluginPreset)
     anim_index: bpy.props.IntProperty()
     motion_prompt: bpy.props.StringProperty(name="Motion", description="Describe the motion, e.g. a joyful jump")
+    motion_model: bpy.props.EnumProperty(
+        name="Model", description="Model that turns the prompt into a motion",
+        items=[(key, f"{label} ({cost})", "") for key, label, cost, _ in presets.MOTION_MODELS],
+    )
     motion_duration: bpy.props.FloatProperty(name="Duration", default=5.0, min=0.5, max=12.0, unit="TIME_ABSOLUTE",
                                              description="Seconds of motion (0.5 to 12)")
 

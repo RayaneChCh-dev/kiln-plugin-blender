@@ -15,10 +15,20 @@ CATEGORIES = (
     ("Dancing", "Dancing"),
 )
 PRESET_COST = "≈ $0.32"  # fal-ai/meshy/rigging with an animation: the rig is redone each time
-MOTION_COST = "≈ $0.08"  # fal-ai/hunyuan-motion
+# key, label, price, fal.ai endpoint. All take the same input and return an SMPL-H FBX; the first is the default.
+MOTION_MODELS = (
+    ("hunyuan", "Hunyuan Motion", "≈ $0.08", "fal-ai/hunyuan-motion"),
+    ("hunyuan_fast", "Hunyuan Motion Fast", "≈ $0.06", "fal-ai/hunyuan-motion/fast"),
+)
 MOTION_DURATIONS = ((2.0, "Quick"), (3.0, "Short"), (5.0, "Normal"), (8.0, "Long"), (12.0, "Maximum"))
 
 _cache: list[dict] | None = None
+
+
+def motion_model(key: str) -> dict:
+    """The motion model of `key`, or the default one when it is unknown."""
+    entry = next((m for m in MOTION_MODELS if m[0] == key), MOTION_MODELS[0])
+    return dict(zip(("key", "label", "cost", "endpoint"), entry))
 
 
 def all_presets() -> list[dict]:

@@ -1,0 +1,71 @@
+{
+ "id": "openai/gpt-image-2.5/sunburst/edit",
+ "prompt_field": "prompt",
+ "image_field": "image_urls",
+ "image_list": true,
+ "fields": [
+  {
+   "name": "image_size",
+   "title": "Image Size",
+   "kind": "ENUM",
+   "description": "The size of the generated image. Use 'auto' to infer from input images.",
+   "options": [
+    "square_hd",
+    "square",
+    "portrait_4_3",
+    "portrait_16_9",
+    "landscape_4_3",
+    "landscape_16_9",
+    "auto"
+   ],
+   "default": "auto"
+  },
+  {
+   "name": "background",
+   "title": "Background",
+   "kind": "ENUM",
+   "description": "Background for the generated image",
+   "options": [
+    "auto",
+    "transparent",
+    "opaque"
+   ],
+   "default": "auto"
+  },
+  {
+   "name": "quality",
+   "title": "Quality",
+   "kind": "ENUM",
+   "description": "Quality for the generated image. Higher settings increase detail, latency, and token usage. Use 'auto' to let the model choose.",
+   "options": [
+    "auto",
+    "low",
+    "medium",
+    "high",
+    "xhigh",
+    "max"
+   ],
+   "default": "high"
+  },
+  {
+   "name": "output_format",
+   "title": "Output Format",
+   "kind": "ENUM",
+   "description": "Output format for the images",
+   "options": [
+    "jpeg",
+    "png",
+    "webp"
+   ],
+   "default": "png"
+  },
+  {
+   "name": "output_compression",
+   "title": "Output Compression",
+   "kind": "INT",
+   "description": "Compression level from 0 to 100. Only supported when output_format is 'jpeg' or 'webp'.",
+   "minimum": 0,
+   "maximum": 100
+  }
+ ]
+}

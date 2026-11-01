@@ -1,0 +1,80 @@
+{
+ "id": "blackforestlabs/flux-3/image-to-video",
+ "prompt_field": "prompt",
+ "image_field": "image_url",
+ "image_list": false,
+ "fields": [
+  {
+   "name": "aspect_ratio",
+   "title": "Aspect Ratio",
+   "kind": "ENUM",
+   "description": "Aspect ratio of the generated video. `auto` lets the model choose.",
+   "options": [
+    "auto",
+    "21:9",
+    "2:1",
+    "16:9",
+    "4:3",
+    "1:1",
+    "3:4",
+    "9:16"
+   ],
+   "default": "auto"
+  },
+  {
+   "name": "resolution",
+   "title": "Resolution",
+   "kind": "ENUM",
+   "description": "Resolution of the generated video. `1080p`, `1440p` (2K) and `2160p` (4K) are finished by the video upsampler; exact dimensions depend on the aspect ratio.",
+   "options": [
+    "720p",
+    "1080p",
+    "1440p",
+    "2160p"
+   ],
+   "default": "720p"
+  },
+  {
+   "name": "duration",
+   "title": "Duration",
+   "kind": "ENUM",
+   "description": "Duration of the generated video in seconds. `auto` lets the model choose.",
+   "options": [
+    "auto",
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20
+   ],
+   "default": "auto"
+  },
+  {
+   "name": "generate_audio",
+   "title": "Generate Audio",
+   "kind": "BOOL",
+   "description": "Whether to generate audio for the video.",
+   "default": true
+  },
+  {
+   "name": "safety_tolerance",
+   "title": "Safety Tolerance",
+   "kind": "INT",
+   "description": "The safety tolerance level for the generated video. 0 is the strictest and 4 is the most permissive.",
+   "minimum": 0,
+   "maximum": 4,
+   "default": 2
+  }
+ ]
+}

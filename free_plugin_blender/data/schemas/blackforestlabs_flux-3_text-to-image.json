@@ -1,0 +1,80 @@
+{
+ "id": "blackforestlabs/flux-3/text-to-image",
+ "prompt_field": "prompt",
+ "image_field": null,
+ "image_list": false,
+ "fields": [
+  {
+   "name": "aspect_ratio",
+   "title": "Aspect Ratio",
+   "kind": "ENUM",
+   "description": "Output aspect ratio. Auto uses the first reference image when editing.",
+   "options": [
+    "auto",
+    "21:9",
+    "2:1",
+    "16:9",
+    "3:2",
+    "7:5",
+    "4:3",
+    "5:4",
+    "1:1",
+    "4:5",
+    "3:4",
+    "5:7",
+    "2:3",
+    "9:16",
+    "1:2"
+   ],
+   "default": "auto"
+  },
+  {
+   "name": "resolution",
+   "title": "Resolution",
+   "kind": "ENUM",
+   "description": "Output resolution tier. 4k can take several minutes.",
+   "options": [
+    "768sq",
+    "1k",
+    "1.5k",
+    "2k",
+    "4k"
+   ],
+   "default": "1k"
+  },
+  {
+   "name": "enable_prompt_expansion",
+   "title": "Enable Prompt Expansion",
+   "kind": "BOOL",
+   "description": "Expand the prompt while preserving its intent and reference roles.",
+   "default": false
+  },
+  {
+   "name": "safety_tolerance",
+   "title": "Safety Tolerance",
+   "kind": "INT",
+   "description": "Safety tolerance, from 0 (strictest) to 4.",
+   "minimum": 0,
+   "maximum": 4,
+   "default": 2
+  },
+  {
+   "name": "output_format",
+   "title": "Output Format",
+   "kind": "ENUM",
+   "description": "The format of the generated image.",
+   "options": [
+    "jpeg",
+    "png"
+   ],
+   "default": "jpeg"
+  },
+  {
+   "name": "version",
+   "title": "Version",
+   "kind": "STRING",
+   "description": "The model version.",
+   "default": "latest"
+  }
+ ]
+}

@@ -1,0 +1,65 @@
+{
+ "id": "ideogram/v4.5/edit",
+ "prompt_field": "prompt",
+ "image_field": "image_url",
+ "image_list": false,
+ "fields": [
+  {
+   "name": "edit_precision",
+   "title": "Edit Precision",
+   "kind": "ENUM",
+   "description": "regular uses Generate; high uses Precise Edit with unchanged-pixel restoration. Both always prepare structured edit instructions.",
+   "options": [
+    "regular",
+    "high"
+   ],
+   "default": "regular"
+  },
+  {
+   "name": "context_window",
+   "title": "Context Window",
+   "kind": "ENUM",
+   "description": "Region to edit with high edit_precision. none edits the whole image, downscaled to at most 4194304 pixels. auto requires mask_url and fits the region around the mask; an oversized mask falls back to whole-image editing. Set context_window_box instead to pick the region yourself. Localized edits pres",
+   "options": [
+    "none",
+    "auto"
+   ],
+   "default": "none"
+  },
+  {
+   "name": "quality",
+   "title": "Quality",
+   "kind": "ENUM",
+   "description": "Quality tier for either edit precision. Defaults to medium.",
+   "options": [
+    "very_low",
+    "low",
+    "medium",
+    "high"
+   ],
+   "default": "medium"
+  },
+  {
+   "name": "image_size",
+   "title": "Image Size",
+   "kind": "ENUM",
+   "description": "auto preserves source geometry, downscaled by the provider if needed. Only unmasked regular edits accept named presets or custom sizes: dimensions >=256, multiples of 32, area <=4194304, ratio <=6:1. Named presets use standard fal dimensions.",
+   "options": [
+    "auto",
+    "square",
+    "square_hd",
+    "portrait_4_3",
+    "landscape_4_3",
+    "portrait_16_9",
+    "landscape_16_9"
+   ],
+   "default": "auto"
+  },
+  {
+   "name": "seed",
+   "title": "Seed",
+   "kind": "INT",
+   "description": "Random seed. Omit to choose automatically."
+  }
+ ]
+}
