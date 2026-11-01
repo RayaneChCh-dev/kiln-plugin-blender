@@ -1,0 +1,42 @@
+{
+ "id": "minimax/h3-max-turbo/image-to-video",
+ "prompt_field": "prompt",
+ "image_field": "image_url",
+ "image_list": false,
+ "fields": [
+  {
+   "name": "duration",
+   "title": "Duration",
+   "kind": "FLOAT",
+   "description": "Video length in seconds. The output can run up to about 0.7 s longer than requested. Use at least 2 s with target_audio_url.",
+   "minimum": 0.92,
+   "maximum": 15,
+   "default": 5
+  },
+  {
+   "name": "resolution",
+   "title": "Resolution",
+   "kind": "ENUM",
+   "description": "The native generation resolution, or 1080P latent refinement from a native 768P source.",
+   "options": [
+    "480P",
+    "768P",
+    "1080P"
+   ],
+   "default": "768P"
+  },
+  {
+   "name": "seed",
+   "title": "Seed",
+   "kind": "INT",
+   "description": "Random seed. A random seed is selected when omitted."
+  },
+  {
+   "name": "prompt_expansion_mode",
+   "title": "Prompt Expansion Mode",
+   "kind": "STRING",
+   "description": "How much effort to spend rewriting the prompt before generation. 'disabled' skips prompt expansion. 'balanced' returns in about a second. 'quality' spends up to ~30s on a richer prompt.",
+   "default": "balanced"
+  }
+ ]
+}

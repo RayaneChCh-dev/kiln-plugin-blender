@@ -45,13 +45,13 @@
 |---|---|---|---|
 | 💬 | **Chat with Claude in the viewport.** Claude models, lights and dresses your scene | Your **Claude Pro / Max** subscription (via Claude Code) | included in your plan |
 | 💬 | Same chat with an API key instead | **OpenAI**, **Gemini** or **DeepSeek** | pay per use |
-| 🖼️ | Text / image / camera view → **image** | fal.ai · Seedream 4.5, Nano Banana, FLUX.2… | ~$0.04 / image |
+| 🖼️ | Text / image / camera view → **image** | fal.ai · Seedream 5.0, Nano Banana 2.1, GPT Image 2.5, FLUX 3… | ~$0.04 / image |
 | 🧱 | **Tileable material** on the active object (with computed relief) | fal.ai · Seedream 4.5 | ~$0.04 |
 | 🗿 | Text / image / camera view → **3D model** | fal.ai · TRELLIS, TRELLIS 2, Tripo, Hunyuan3D, Meshy 7 | $0.02 – $0.53 |
 | 🦴 | **Auto-rig** + walk / run cycles | fal.ai · Meshy rigging | ~$0.20 |
-| 🕺 | **678 animation presets**, or a motion described in text | fal.ai · Meshy, Hunyuan Motion | $0.08 – $0.32 |
+| 🕺 | **678 animation presets**, or a motion described in text | fal.ai · Meshy, Hunyuan Motion | $0.06 – $0.32 |
 | 🎨 | **Retexture** a model | fal.ai · Meshy retexture | see fal.ai |
-| 🎬 | Text / camera view → **video** (hidden by default) | fal.ai · Kling 3.0, Veo 3.1, Seedance… | ~$0.14 / s |
+| 🎬 | Text / camera view → **video** (hidden by default) | fal.ai · Kling 4.0, Seedance 2.5, Veo 3.1, FLUX 3, MiniMax H3… | from ~$0.03 / s |
 | 🌄 | HDRIs, PBR textures, 3D models | **Poly Haven** (CC0) | **free** |
 | 🗂️ | **My generations**: everything you generated, filtered and one click away | your `~/Kiln` folder | **free** |
 | 🔁 | Copy a motion between rigs, voxel remesh, LOD | Blender | **free** |
@@ -370,8 +370,8 @@ requirement).
   - **Unrigged** character: Meshy rigs and animates it. The rigged copy replaces the original,
     which is hidden, not deleted.
   - **Rigged** character: the motion is copied onto your rig as a new *action*.
-- **Free motion** (~$0.08): describe a motion ("a joyful jump"), 0.5 to 12 s. Hunyuan Motion
-  generates it, then it is retargeted onto your rig.
+- **Free motion** (~$0.08, or ~$0.06 with Hunyuan Motion Fast): describe a motion ("a joyful jump"),
+  0.5 to 12 s. Hunyuan Motion generates it, then it is retargeted onto your rig.
 - **Copy a motion** (free): select the animated armature, Ctrl+click the target, *Copy motion*.
   It recognises SMPL, Meshy, Mixamo, Rigify and Unreal bone names (at least 8 shared joints).
 
@@ -383,8 +383,8 @@ Every motion is an action kept in the .blend (*fake user*).
 
 | Panel | Built-in models |
 |---|---|
-| Image | Seedream 4.5, Nano Banana, Nano Banana Pro, FLUX.2, Qwen Image, FLUX.1 schnell |
-| Video | Kling 3.0 Pro / Standard, Kling 2.5 Turbo, Veo 3.1 / Fast, Seedance 1 Pro, Hailuo 02, Wan 2.2 |
+| Image | Seedream 5.0 Pro / Lite / Flash, Seedream 4.5, Nano Banana 2.1 / 2 / Pro, Nano Banana, GPT Image 2.5 Sunburst / Flare, FLUX 3, FLUX 3 Klein, FLUX.2, Qwen Image 3, Qwen Image, Krea 3, Ideogram 4.5, Grok Imagine Image 2.0, FLUX.1 schnell |
+| Video | Kling 4.0, Kling 3.0 Pro / Standard, Kling 2.5 Turbo, Seedance 2.5, Seedance 2.0 / Fast, Seedance 1 Pro, Veo 3.1 / Fast, FLUX 3 Max, FLUX 3 Video, MiniMax H3 Max / Turbo, Hailuo 02, Gemini Omni Flash 1.1, Wan 3.0 Prime, Wan 2.2, Grok Imagine Video 1.5, Luma Ray 3.2, LTX 2.5 Pro |
 | 3D | TRELLIS, TRELLIS 2, Tripo H3.1, Hunyuan3D 3.1 Pro, Meshy 7 (fal.ai), Meshy (your key) |
 
 **Quick settings** work the same for every model and are translated to each model's own fields:

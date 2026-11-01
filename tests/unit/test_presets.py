@@ -9,6 +9,12 @@ def test_library_is_complete():
     assert len({p["id"] for p in found}) == len(found)
 
 
+def test_motion_models():
+    assert presets.motion_model("hunyuan_fast")["endpoint"] == "fal-ai/hunyuan-motion/fast"
+    assert presets.motion_model("")["endpoint"] == presets.motion_model("hunyuan")["endpoint"]
+    assert presets.motion_model("no such model")["key"] == presets.MOTION_MODELS[0][0]
+
+
 def test_search_words_category_in_place():
     walks = presets.search("walk")
     assert walks and all("walk" in f"{p['name']} {p['sub']} {p['category']}".lower() for p in walks)

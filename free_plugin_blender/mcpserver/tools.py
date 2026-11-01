@@ -376,7 +376,7 @@ def generate(kind, prompt="", model="", options="", object="", preset_id=-1, dur
             "video": lambda: ops.generate_video(**common),
             "rig": lambda: ops.rig(),
             "retexture": lambda: ops.retexture(prompt=prompt),
-            "motion": lambda: ops.generate_motion(prompt=prompt, duration=duration),
+            "motion": lambda: ops.generate_motion(prompt=prompt, duration=duration, model=model),
             "preset": lambda: ops.animate_preset(preset_id=preset_id),
         }[kind]()
 
@@ -411,7 +411,7 @@ def plugin_status():
     return {"fal_key": bool(prefs.fal_key()), "meshy_key": bool(prefs.meshy_key()),
             "models": {slot: models(slot) for slot in ("image", "video", "mesh")},
             "animation": {"presets": len(presets.all_presets()), "preset_cost": presets.PRESET_COST,
-                          "motion_cost": presets.MOTION_COST},
+                          "motion_models": {key: cost for key, _, cost, _ in presets.MOTION_MODELS}},
             "running": [t.label for t in tasks.TASKS if t.state == "running"]}
 
 
@@ -451,7 +451,7 @@ def build():
              {"source": {"type": "string", "enum": ["viewport", "camera"]}, "max_size": i}, run=screenshot),
         Tool("generate", "Paid fal.ai generation, result put in the scene. image/model3d/video: prompt; "
              "material/retexture: prompt, on `object`; rig/preset/motion: on the character `object` "
-             "(preset: preset_id from find_presets; motion: prompt, duration 0.5-12 s).",
+             "(preset: preset_id from find_presets; motion: prompt, duration 0.5-12 s, model hunyuan or hunyuan_fast).",
              {"kind": {"type": "string", "enum": list(GENERATE_KINDS)}, "prompt": s,
               "model": {**s, "description": "catalog key or fal.ai id"},
               "options": {**s, "description": "model options as JSON"}, "object": s, "preset_id": i,

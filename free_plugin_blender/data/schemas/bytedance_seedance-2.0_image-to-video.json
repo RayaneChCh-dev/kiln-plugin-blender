@@ -1,0 +1,95 @@
+{
+ "id": "bytedance/seedance-2.0/image-to-video",
+ "prompt_field": "prompt",
+ "image_field": "image_url",
+ "image_list": false,
+ "fields": [
+  {
+   "name": "resolution",
+   "title": "Resolution",
+   "kind": "ENUM",
+   "description": "Video resolution - 480p for faster generation, 720p for balance, 1080p for high quality, 4k for highest quality.",
+   "options": [
+    "480p",
+    "720p",
+    "1080p",
+    "4k"
+   ],
+   "default": "720p"
+  },
+  {
+   "name": "duration",
+   "title": "Duration",
+   "kind": "ENUM",
+   "description": "Duration of the video in seconds. Supports 4 to 15 seconds, or auto to let the model decide based on the prompt.",
+   "options": [
+    "auto",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9",
+    "10",
+    "11",
+    "12",
+    "13",
+    "14",
+    "15"
+   ],
+   "default": "auto"
+  },
+  {
+   "name": "aspect_ratio",
+   "title": "Aspect Ratio",
+   "kind": "ENUM",
+   "description": "The aspect ratio of the generated video. Use 16:9 for landscape, 9:16 for portrait/vertical, 1:1 for square, 21:9 for ultrawide cinematic, or auto to infer from the input image.",
+   "options": [
+    "auto",
+    "21:9",
+    "16:9",
+    "4:3",
+    "1:1",
+    "3:4",
+    "9:16"
+   ],
+   "default": "auto"
+  },
+  {
+   "name": "generate_audio",
+   "title": "Generate Audio",
+   "kind": "BOOL",
+   "description": "Whether to generate synchronized audio for the video, including sound effects, ambient sounds, and lip-synced speech. The cost of video generation is the same regardless of whether audio is generated or not.",
+   "default": true
+  },
+  {
+   "name": "bitrate_mode",
+   "title": "Bitrate Mode",
+   "kind": "ENUM",
+   "description": "Output bitrate mode. 'high' requests a higher-quality, larger-file encode from the model; 'standard' uses the default bitrate.",
+   "options": [
+    "standard",
+    "high"
+   ],
+   "default": "standard"
+  },
+  {
+   "name": "codec",
+   "title": "Codec",
+   "kind": "ENUM",
+   "description": "'auto' retains default video codec behaviour; 'H264' uses H.264; 'H265' uses H.265.",
+   "options": [
+    "auto",
+    "H264",
+    "H265"
+   ],
+   "default": "auto"
+  },
+  {
+   "name": "end_user_id",
+   "title": "End User Id",
+   "kind": "STRING",
+   "description": "The unique user ID of the end user."
+  }
+ ]
+}

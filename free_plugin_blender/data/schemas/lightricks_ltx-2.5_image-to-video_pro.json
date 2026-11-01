@@ -1,0 +1,79 @@
+{
+ "id": "lightricks/ltx-2.5/image-to-video/pro",
+ "prompt_field": "prompt",
+ "image_field": "image_url",
+ "image_list": false,
+ "fields": [
+  {
+   "name": "duration",
+   "title": "Duration",
+   "kind": "ENUM",
+   "description": "The duration of the generated video in seconds, up to 10 seconds. Set to 'auto' to let the model choose the duration automatically.",
+   "options": [
+    6,
+    8,
+    10,
+    "auto"
+   ],
+   "default": "auto"
+  },
+  {
+   "name": "resolution",
+   "title": "Resolution",
+   "kind": "ENUM",
+   "description": "The resolution of the generated video.",
+   "options": [
+    "720p",
+    "1080p"
+   ],
+   "default": "1080p"
+  },
+  {
+   "name": "aspect_ratio",
+   "title": "Aspect Ratio",
+   "kind": "ENUM",
+   "description": "The aspect ratio of the generated video. If 'auto', the aspect ratio will be determined automatically based on the input image.",
+   "options": [
+    "auto",
+    "16:9",
+    "9:16"
+   ],
+   "default": "auto"
+  },
+  {
+   "name": "fps",
+   "title": "Frames per Second",
+   "kind": "ENUM",
+   "description": "The frames per second of the generated video.",
+   "options": [
+    24,
+    25,
+    50
+   ],
+   "default": 25
+  },
+  {
+   "name": "generate_audio",
+   "title": "Generate Audio",
+   "kind": "BOOL",
+   "description": "Whether to generate audio for the generated video",
+   "default": true
+  },
+  {
+   "name": "camera_motion",
+   "title": "Camera Motion",
+   "kind": "ENUM",
+   "description": "Optional camera motion applied to the generated video.",
+   "options": [
+    "dolly_in",
+    "dolly_out",
+    "dolly_left",
+    "dolly_right",
+    "jib_up",
+    "jib_down",
+    "static",
+    "focus_shift"
+   ]
+  }
+ ]
+}

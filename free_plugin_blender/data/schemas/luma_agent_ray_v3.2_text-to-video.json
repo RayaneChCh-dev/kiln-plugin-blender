@@ -1,0 +1,67 @@
+{
+ "id": "luma/agent/ray/v3.2/text-to-video",
+ "prompt_field": "prompt",
+ "image_field": null,
+ "image_list": false,
+ "fields": [
+  {
+   "name": "aspect_ratio",
+   "title": "Aspect Ratio",
+   "kind": "ENUM",
+   "description": "Aspect ratio of the generated video.",
+   "options": [
+    "3:4",
+    "4:3",
+    "1:1",
+    "9:16",
+    "16:9",
+    "21:9"
+   ],
+   "default": "16:9"
+  },
+  {
+   "name": "resolution",
+   "title": "Resolution",
+   "kind": "ENUM",
+   "description": "Resolution of the generated video. Higher resolutions cost more.",
+   "options": [
+    "540p",
+    "720p",
+    "1080p"
+   ],
+   "default": "540p"
+  },
+  {
+   "name": "duration",
+   "title": "Duration",
+   "kind": "ENUM",
+   "description": "Duration of the generated video.",
+   "options": [
+    "5s",
+    "10s"
+   ],
+   "default": "5s"
+  },
+  {
+   "name": "loop",
+   "title": "Loop",
+   "kind": "BOOL",
+   "description": "Generate a seamless loop. Only valid for 5s, standard-dynamic-range generations without an end frame.",
+   "default": false
+  },
+  {
+   "name": "hdr",
+   "title": "Hdr",
+   "kind": "BOOL",
+   "description": "Generate an HDR-encoded MP4. Requires HDR access on the account and a resolution of 720p or 1080p; not supported with 10s or loop.",
+   "default": false
+  },
+  {
+   "name": "exr_export",
+   "title": "Exr Export",
+   "kind": "BOOL",
+   "description": "Also export an EXR file alongside the MP4. Requires hdr=true and HDR access.",
+   "default": false
+  }
+ ]
+}

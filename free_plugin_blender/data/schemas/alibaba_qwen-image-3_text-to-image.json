@@ -1,0 +1,55 @@
+{
+ "id": "alibaba/qwen-image-3/text-to-image",
+ "prompt_field": "prompt",
+ "image_field": null,
+ "image_list": false,
+ "fields": [
+  {
+   "name": "negative_prompt",
+   "title": "Negative Prompt",
+   "kind": "STRING",
+   "description": "Content to avoid in the generated image. Max 500 characters.",
+   "default": ""
+  },
+  {
+   "name": "image_size",
+   "title": "Image Size",
+   "kind": "ENUM",
+   "description": "The size of the generated image. Total number of pixels must be between 512x512 and 2048x2048.",
+   "options": [
+    "square_hd",
+    "square",
+    "portrait_4_3",
+    "portrait_16_9",
+    "landscape_4_3",
+    "landscape_16_9"
+   ],
+   "default": "square_hd"
+  },
+  {
+   "name": "enable_prompt_expansion",
+   "title": "Enable Prompt Expansion",
+   "kind": "BOOL",
+   "description": "Enable automatic LLM prompt rewriting for better results.",
+   "default": true
+  },
+  {
+   "name": "seed",
+   "title": "Seed",
+   "kind": "INT",
+   "description": "Random seed for reproducibility (0-2147483647)."
+  },
+  {
+   "name": "output_format",
+   "title": "Output Format",
+   "kind": "ENUM",
+   "description": "The format of the generated image.",
+   "options": [
+    "jpeg",
+    "png",
+    "webp"
+   ],
+   "default": "png"
+  }
+ ]
+}

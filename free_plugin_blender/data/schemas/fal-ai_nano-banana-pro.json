@@ -18,13 +18,6 @@
    "description": "Thinking effort. Pro Image supports only high; omit to retain its provider default. An explicit level requests summaries unless include_thoughts overrides it. Thinking cannot be disabled."
   },
   {
-   "name": "image_passthrough",
-   "title": "Image Passthrough",
-   "kind": "BOOL",
-   "description": "Send reference images and return provider images without resizing or re-encoding, preserving transparency and metadata. Uses direct Google or Vertex APIs; the returned image format may differ from output_format.",
-   "default": false
-  },
-  {
    "name": "include_thoughts",
    "title": "Include Thoughts",
    "kind": "BOOL",

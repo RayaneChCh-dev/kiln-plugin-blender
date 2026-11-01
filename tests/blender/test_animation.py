@@ -121,6 +121,17 @@ def test():
     harness.check("mannequin removed", len(bpy.data.objects) == count)
     harness.check("timeline covers the motion", scene.frame_end >= rigs.FRAMES)
 
+    # The faster model, chosen by the caller or in the panel.
+    bpy.ops.freeplugin.generate_motion(prompt="a fast spin", duration=3, model="hunyuan_fast")
+    done = harness.wait()
+    harness.check("model override", last_call()[0] == "fal-ai/hunyuan-motion/fast", last_call()[0])
+    props.motion_model = "hunyuan_fast"
+    bpy.ops.freeplugin.generate_motion(prompt="a slow spin", duration=3)
+    done = harness.wait()
+    harness.check("panel model", last_call()[0] == "fal-ai/hunyuan-motion/fast" and done and done[0].state == "done",
+                  last_call()[0])
+    props.motion_model = "hunyuan"
+
     # No rig: the mannequin is kept, at the 3D cursor.
     select(active=None)
     scene.cursor.location = (-3, 0, 0)

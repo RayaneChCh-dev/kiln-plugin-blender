@@ -1,0 +1,69 @@
+{
+ "id": "xai/grok-imagine-image/v2.0/edit",
+ "prompt_field": "prompt",
+ "image_field": "image_urls",
+ "image_list": true,
+ "fields": [
+  {
+   "name": "aspect_ratio",
+   "title": "Aspect Ratio",
+   "kind": "ENUM",
+   "description": "Aspect ratio of the edited image. Standard auto uses the nearest supported ratio of the first reference.",
+   "options": [
+    "2:1",
+    "20:9",
+    "19.5:9",
+    "16:9",
+    "4:3",
+    "3:2",
+    "1:1",
+    "2:3",
+    "3:4",
+    "9:16",
+    "9:19.5",
+    "9:20",
+    "1:2",
+    "auto",
+    "21:9",
+    "5:2"
+   ],
+   "default": "auto"
+  },
+  {
+   "name": "resolution",
+   "title": "Resolution",
+   "kind": "ENUM",
+   "description": "Resolution of the generated image: 1k, 1.5k, or 2k.",
+   "options": [
+    "1k",
+    "1.5k",
+    "2k"
+   ],
+   "default": "1k"
+  },
+  {
+   "name": "output_format",
+   "title": "Output Format",
+   "kind": "ENUM",
+   "description": "The format of the generated image.",
+   "options": [
+    "jpeg",
+    "png",
+    "webp"
+   ],
+   "default": "jpeg"
+  },
+  {
+   "name": "quality",
+   "title": "Quality",
+   "kind": "ENUM",
+   "description": "Quality level of the edited image. `auto` lets xAI choose; it currently uses `medium` for editing.",
+   "options": [
+    "low",
+    "medium",
+    "auto"
+   ],
+   "default": "medium"
+  }
+ ]
+}

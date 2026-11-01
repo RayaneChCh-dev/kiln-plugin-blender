@@ -225,8 +225,9 @@ def _draw_animation(layout, context):
         body.template_list("FREEPLUGIN_UL_presets", "", props, "anim_results", props, "anim_index", rows=6)
         body.label(text=f"{len(props.anim_results)} presets")
         body.operator("freeplugin.animate_preset", text=f"Animate  {presets.PRESET_COST}", icon="PLAY")
-    body = _section(layout, "anim_motion", f"Motion from text ({presets.MOTION_COST})", "OUTLINER_DATA_GP_LAYER")
+    body = _section(layout, "anim_motion", "Motion from text", "OUTLINER_DATA_GP_LAYER")
     if body is not None:
+        body.prop(props, "motion_model", text="")
         body.prop(props, "motion_prompt", text="")
         body.prop(props, "motion_duration")
         if rig is None:

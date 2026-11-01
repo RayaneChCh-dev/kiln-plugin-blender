@@ -1,5 +1,6 @@
 import json
 
+import pytest
 from fpb import catalog
 
 
@@ -12,6 +13,25 @@ def test_bundled_catalog_is_consistent(tmp_path):
             assert entry.get("provider") or entry.get("text") or entry.get("image"), entry
             for endpoint in filter(None, (entry.get("text"), entry.get("image"))):
                 assert catalog.cached_schema(endpoint) is not None, f"no bundled schema for {endpoint}"
+
+
+def test_existing_models_keep_their_menu_position(tmp_path):
+    # Blender saves a dynamic enum as its index: inserting above these would switch the model
+    # of saved scenes, and the first entry is the default of new ones. New models go after them.
+    catalog.configure(tmp_path)
+    assert [e["key"] for e in catalog.models("image")[:6]] == [
+        "seedream45", "nano_banana", "nano_banana_pro", "flux2", "qwen_image", "flux_schnell"]
+    assert [e["key"] for e in catalog.models("video")[:8]] == [
+        "kling3_pro", "kling3_std", "kling25_turbo", "veo31_fast", "veo31", "seedance1_pro", "hailuo02", "wan22"]
+
+
+@pytest.mark.parametrize("key", ["h3_max", "h3_max_turbo"])
+def test_h3_sends_the_prompt_expansion_mode_it_requires(tmp_path, key):
+    catalog.configure(tmp_path)
+    model = catalog.get("video", key)
+    assert model["defaults"]["prompt_expansion_mode"] == "balanced"
+    for endpoint in (model["text"], model["image"]):
+        assert "prompt_expansion_mode" in {f["name"] for f in catalog.cached_schema(endpoint)["fields"]}
 
 
 def test_user_catalog_adds_and_overrides(tmp_path):

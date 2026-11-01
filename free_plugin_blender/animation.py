@@ -169,13 +169,15 @@ class FREEPLUGIN_OT_animate_preset(bpy.types.Operator):
 class FREEPLUGIN_OT_generate_motion(bpy.types.Operator):
     bl_idname = "freeplugin.generate_motion"
     bl_label = "Generate motion"
-    bl_description = (f"Text → motion with Hunyuan Motion, {presets.MOTION_COST} on fal.ai, retargeted onto the "
-                      "active character's rig (or kept as a mannequin when there is none)")
+    bl_description = ("Text → motion with Hunyuan Motion on fal.ai, retargeted onto the active character's rig "
+                      "(or kept as a mannequin when there is none)")
     bl_options = {"REGISTER"}
 
     prompt: bpy.props.StringProperty(name="Prompt", options={"SKIP_SAVE"})
     duration: bpy.props.FloatProperty(name="Duration", default=0.0, min=0.0, max=12.0, options={"SKIP_SAVE"},
                                       description="Seconds (0.5 to 12); 0: the panel's value")
+    model: bpy.props.StringProperty(name="Model", options={"SKIP_SAVE"},
+                                    description="hunyuan or hunyuan_fast; empty: the panel's value")
 
     def execute(self, context):
         props = context.scene.free_plugin
@@ -188,9 +190,10 @@ class FREEPLUGIN_OT_generate_motion(bpy.types.Operator):
         rig_name = rig.name if rig else None
         key, folder = prefs.fal_key(), prefs.output_dir("animations")
         cursor = context.scene.cursor.location.copy()
+        endpoint = presets.motion_model(self.model or props.motion_model)["endpoint"]
 
         def work(task):
-            result = fal.run(fal.MOTION_MODEL, {"prompt": prompt, "duration": duration, "output_format": "fbx"},
+            result = fal.run(endpoint, {"prompt": prompt, "duration": duration, "output_format": "fbx"},
                              key, task.set)
             task.set("downloading…")
             return net.download(fal.motion_url(result), folder / _stamp(prompt, "fbx"))

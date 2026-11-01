@@ -1,0 +1,41 @@
+{
+ "id": "kling/v4/text-to-video",
+ "prompt_field": "prompt",
+ "image_field": null,
+ "image_list": false,
+ "fields": [
+  {
+   "name": "duration",
+   "title": "Duration",
+   "kind": "INT",
+   "description": "Video duration in seconds (3-30).",
+   "minimum": 3,
+   "maximum": 30,
+   "default": 5
+  },
+  {
+   "name": "resolution",
+   "title": "Resolution",
+   "kind": "ENUM",
+   "description": "Output resolution.",
+   "options": [
+    "720p",
+    "1080p"
+   ],
+   "default": "1080p"
+  },
+  {
+   "name": "aspect_ratio",
+   "title": "Aspect Ratio",
+   "kind": "ENUM",
+   "description": "Aspect ratio of the generated video.",
+   "options": [
+    "16:9",
+    "9:16",
+    "1:1",
+    "21:9"
+   ],
+   "default": "16:9"
+  }
+ ]
+}
