@@ -77,8 +77,11 @@ def test():
     mcp = json.loads(argv[argv.index("--mcp-config") + 1])["mcpServers"]["blender"]
     harness.check("MCP port passed to the server", mcp["env"]["BLENDER_PORT"] == "9877")
     prompt = argv[argv.index("--append-system-prompt") + 1]
-    harness.check("system prompt has the catalog and instance id",
-                  "trellis ($0.02)" in prompt and chat.INSTANCE in prompt)
+    harness.check("system prompt has the catalog, not the instance id",
+                  "trellis ($0.02)" in prompt and chat.INSTANCE not in prompt)
+    harness.check("instance id sent with the message, not shown",
+                  f"[Blender id: {chat.INSTANCE}]" in call["stdin"]
+                  and "Blender id" not in chat.state.messages[0]["text"])
     harness.check("instance id published", bpy.context.window_manager.get("free_plugin_instance") == chat.INSTANCE)
     harness.check("saved in the scene", len(json.loads(scene["free_plugin_chat"])["messages"]) == 6)
     harness.check("token usage shown", chat.state.usage == "Last answer: 9.3k tokens in (9.0k cached) · 450 out",
