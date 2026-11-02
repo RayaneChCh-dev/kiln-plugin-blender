@@ -315,6 +315,11 @@ Attach the **camera view** with **+** to generate from what the camera sees (ima
 image → 3D, image → video). **Render scene** does a full render with the scene's engine first (like F12:
 seconds with EEVEE, longer with Cycles) and starts from that.
 
+In the **Video** tab, *Start from: Image file* starts a video from an image on disk. When the model
+takes them, the tab also shows an **End** image (the last frame: Kling, Seedance, Wan, MiniMax, LTX,
+Luma…) and **Middle** images, the frames the video passes through in order (Kling 4, up to 8).
+Fields the chosen model does not take are not shown.
+
 ### After an image: use it
 
 When an image is done, the **Image** tab shows it with three actions:
@@ -435,6 +440,8 @@ bpy.ops.freeplugin.generate_texture(prompt="green zellige tiles")
 bpy.ops.freeplugin.generate_3d(prompt="a clay tagine pot", model="trellis")
 bpy.ops.freeplugin.generate_video(prompt="slow dolly in", model="kling25_turbo",
                                   options='{"duration": "10"}')
+bpy.ops.freeplugin.generate_video(prompt="walks to the door", model="kling4", start_image="/a.png",
+                                  middle_images='["/b.png"]', end_image="/c.png")
 bpy.ops.freeplugin.animate_preset(preset_id=106)   # id from data/animations.json
 bpy.ops.freeplugin.generate_motion(prompt="a joyful jump", duration=3)
 ```

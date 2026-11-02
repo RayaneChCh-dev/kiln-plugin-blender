@@ -50,17 +50,35 @@ def run(model_id, payload, key, progress=None, timeout=1800):
     raise ApiError(f"fal.ai: timed out after {timeout}s")
 
 
-def build_payload(schema, options, *, prompt=None, image_uris=()):
-    """Options the user set, plus the prompt and input images in the model's own field names."""
+def build_payload(schema, options, *, prompt=None, image_uris=(), end_uri=None, middle_uris=()):
+    """Options the user set, plus the prompt and input images in the model's own field names.
+
+    `end_uri` and `middle_uris` are the last frame and the ordered frames in between, for the
+    video models that take them.
+    """
     schema = schema or {"prompt_field": "prompt", "image_field": "image_url", "image_list": False}
+    model = schema.get("id", "This model")
     payload = dict(options)
     if prompt and schema.get("prompt_field"):
         payload[schema["prompt_field"]] = prompt
+    if (end_uri or middle_uris) and not image_uris:
+        raise ApiError("An end or middle image needs a start image too")
     if image_uris:
         field = schema.get("image_field")
         if not field:
-            raise ApiError(f"{schema.get('id', 'This model')} does not take an input image")
+            raise ApiError(f"{model} does not take an input image")
         payload[field] = list(image_uris) if schema.get("image_list") else image_uris[0]
+    if end_uri:
+        if not schema.get("end_field"):
+            raise ApiError(f"{model} does not take an end image")
+        payload[schema["end_field"]] = end_uri
+    if middle_uris:
+        if not schema.get("middle_field"):
+            raise ApiError(f"{model} does not take middle images")
+        most = schema.get("middle_max")
+        if most is not None and len(middle_uris) > most:
+            raise ApiError(f"{model} takes at most {most} middle images")
+        payload[schema["middle_field"]] = list(middle_uris)
     return payload
 
 

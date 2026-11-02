@@ -1,5 +1,6 @@
 """Simple settings (ratio, resolution, mode…) reach each model's own fields."""
 
+import json
 import os
 import sys
 from pathlib import Path
@@ -8,7 +9,7 @@ import bpy
 
 sys.path.insert(0, str(Path(__file__).parent))
 import harness  # noqa: E402
-from fakes import fake_fal, last_call  # noqa: E402
+from fakes import calls, fake_fal, last_call  # noqa: E402
 
 
 def test():
@@ -103,6 +104,72 @@ def test():
     bpy.ops.freeplugin.generate_video(prompt="pan")
     harness.wait()
     harness.check("Kling 2.5: unsupported 15 s dropped", "duration" not in last_call()[1], last_call()[1])
+
+    # The video panel shows the end and middle fields only for the models that take them.
+    class Layout:
+        def __init__(self, shown):
+            self.shown, self.enabled = shown, True
+
+        def prop(self, _data, name, text=""):
+            self.shown.append(name)
+
+        def operator(self, idname, **_kw):
+            self.shown.append(idname)
+            return type("Op", (), {})()
+
+        def row(self, **_kw):
+            return self
+
+    def drawn(source, model):
+        props.video_source, props.video_model.model = source, model
+        shown = []
+        harness.module(".panels")._draw_video_keyframes(Layout(shown), scene)
+        return shown
+
+    harness.check("Kling 4: start, end and middle fields", drawn("FILE", "kling4") == [
+        "video_start_path", "video_end_path", "freeplugin.video_middle_add"], drawn("FILE", "kling4"))
+    harness.check("Veo 3.1: no end or middle field", drawn("CAMERA", "veo31") == [], drawn("CAMERA", "veo31"))
+    harness.check("text only: no image field", drawn("TEXT", "kling4") == [], drawn("TEXT", "kling4"))
+
+    # Video keyframes: start, middle and end images from the panel, then from the operator (MCP path).
+    props.video_source, props.video_start_path, props.video_model.model = "FILE", str(png), "kling4"
+    props.video_end_path = str(png)
+    props.video_middle.add().path = str(png)
+    props.video_middle.add().path = str(png)
+    bpy.ops.freeplugin.generate_video(prompt="walk")
+    harness.wait()
+    model, body = last_call()
+    harness.check("Kling 4: start, end and 2 middle images sent", model == "kling/v4/image-to-video"
+                  and body.get("start_image_url", "").startswith("data:")
+                  and body.get("end_image_url", "").startswith("data:")
+                  and len(body.get("middle_image_urls", [])) == 2, (model, sorted(body)))
+    props.video_end_path = ""
+    props.video_middle.clear()
+    bpy.ops.freeplugin.generate_video(prompt="walk", end_image=str(png), middle_images=json.dumps([str(png)]))
+    harness.wait()
+    body = last_call()[1]
+    harness.check("operator arguments override the panel", "end_image_url" in body
+                  and len(body.get("middle_image_urls", [])) == 1, sorted(body))
+    before = len(calls)
+    props.video_source = "TEXT"
+    try:
+        bpy.ops.freeplugin.generate_video(prompt="walk", end_image=str(png))
+        refused = False
+    except RuntimeError:
+        refused = True
+    harness.check("an end image without a start image is refused", refused and len(calls) == before)
+    props.video_model.model = "kling25_turbo"
+    props.video_source = "FILE"
+    bpy.ops.freeplugin.generate_video(prompt="walk", end_image=str(png))
+    harness.wait()
+    harness.check("Kling 2.5 calls it tail_image_url", "tail_image_url" in last_call()[1], sorted(last_call()[1]))
+    props.video_model.model = "veo31"
+    bpy.ops.freeplugin.generate_video(prompt="walk", end_image=str(png))
+    done = harness.wait()
+    harness.check("a model without an end image fails with a clear error",
+                  done and done[-1].state == "error" and "end image" in done[-1].detail,
+                  [(t.state, t.detail) for t in done])
+    props.video_source = "TEXT"
 
     harness.check("menu and operators registered", hasattr(bpy.types, "FREEPLUGIN_MT_control")
                   and hasattr(bpy.ops.freeplugin, "control_set"))

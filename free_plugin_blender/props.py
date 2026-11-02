@@ -33,6 +33,10 @@ class FreePluginAsset(bpy.types.PropertyGroup):
     asset_id: bpy.props.StringProperty()
 
 
+class FreePluginImagePath(bpy.types.PropertyGroup):
+    path: bpy.props.StringProperty(name="Image", subtype="FILE_PATH")
+
+
 class FreePluginPreset(bpy.types.PropertyGroup):
     preset_id: bpy.props.IntProperty()
     sub: bpy.props.StringProperty()
@@ -79,9 +83,16 @@ class FreePluginProps(bpy.types.PropertyGroup):
     video_source: bpy.props.EnumProperty(
         name="Start from",
         items=[("CAMERA", "Camera view", "Animate a render of the active camera"), ("TEXT", "Text only", ""),
-               ("RENDER", "Render scene", "Render the scene with its engine, like F12, and start from that")],
+               ("RENDER", "Render scene", "Render the scene with its engine, like F12, and start from that"),
+               ("FILE", "Image file", "Start from an image on disk")],
         update=_source_changed,
     )
+    video_start_path: bpy.props.StringProperty(name="Start image", subtype="FILE_PATH")
+    video_end_path: bpy.props.StringProperty(
+        name="End image", subtype="FILE_PATH",
+        description="Last frame of the video (models that take one); empty: none",
+    )
+    video_middle: bpy.props.CollectionProperty(type=FreePluginImagePath)
 
     # 3D
     mesh_prompt: bpy.props.StringProperty(name="Prompt")
@@ -158,7 +169,8 @@ class FreePluginProps(bpy.types.PropertyGroup):
     remesh_voxel: bpy.props.FloatProperty(name="Voxel size", default=0.02, min=0.001, soft_max=0.5, unit="LENGTH")
 
 
-classes = (*params.classes, ui_controls.FreePluginChoices, FreePluginAsset, FreePluginPreset, FreePluginProps)
+classes = (*params.classes, ui_controls.FreePluginChoices, FreePluginAsset, FreePluginImagePath, FreePluginPreset,
+           FreePluginProps)
 
 
 def register():

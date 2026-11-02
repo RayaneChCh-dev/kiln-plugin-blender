@@ -3,6 +3,8 @@
  "prompt_field": "prompt",
  "image_field": "start_image_url",
  "image_list": false,
+ "end_field": "end_image_url",
+ "middle_field": "middle_image_urls",
  "fields": [
   {
    "name": "duration",
@@ -24,5 +26,6 @@
    ],
    "default": "1080p"
   }
- ]
+ ],
+ "middle_max": 8
 }

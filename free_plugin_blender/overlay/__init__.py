@@ -270,6 +270,8 @@ def _attachment(context, mode):
             return os.path.basename(props.mesh_image_path) or "Image file"
     if mode == "video" and props.video_source == "CAMERA":
         return "Camera view"
+    if mode == "video" and props.video_source == "FILE":
+        return os.path.basename(props.video_start_path) or "Image file"
     if mode == "material":
         active = context.active_object
         return f"On: {active.name}" if active is not None and active.type == "MESH" else "Select a mesh first"

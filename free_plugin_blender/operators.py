@@ -7,6 +7,9 @@ also makes them callable from an MCP client:
     bpy.ops.freeplugin.generate_3d(prompt="a clay tagine", model="trellis")
     bpy.ops.freeplugin.generate_video(prompt="slow dolly in", model="kling25_turbo",
                                       options='{"duration": "10"}')
+    bpy.ops.freeplugin.generate_video(prompt="walks to the door", model="kling4",
+                                      start_image="/a.png", end_image="/c.png",
+                                      middle_images='["/b.png"]')
 """
 
 from __future__ import annotations
@@ -39,7 +42,7 @@ class _ModelChoice:
         self.options, self.extra = options, extra
         self.slot, self.choices = slot, choices or {}
 
-    def run(self, task, key, kind, out_dir, label, *, prompt=None, images=(), square=False):
+    def run(self, task, key, kind, out_dir, label, *, prompt=None, images=(), square=False, end=None, middle=()):
         """Worker thread: call fal.ai and download the output file."""
         schema = self.schema or catalog.fetch_schema(self.endpoint)
         names = {f["name"] for f in schema.get("fields", [])}
@@ -48,7 +51,9 @@ class _ModelChoice:
         if square:
             options = fal.square_options(schema, options)
         options.update(self.extra)
-        payload = fal.build_payload(schema, options, prompt=prompt, image_uris=[net.data_uri(p) for p in images])
+        payload = fal.build_payload(schema, options, prompt=prompt, image_uris=[net.data_uri(p) for p in images],
+                                    end_uri=net.data_uri(end) if end else None,
+                                    middle_uris=[net.data_uri(p) for p in middle])
         result = fal.run(self.endpoint, payload, key, task.set)
         url = fal.result_url(result, kind)
         task.set("downloading…")
@@ -177,7 +182,33 @@ class FREEPLUGIN_OT_generate_texture(_Generate):
 class FREEPLUGIN_OT_generate_video(_Generate):
     bl_idname = "freeplugin.generate_video"
     bl_label = "Generate video"
-    bl_description = "Text or camera view → video with the chosen fal.ai model, added to the Video Sequencer"
+    bl_description = "Text, camera view or image → video with the chosen fal.ai model, added to the Video Sequencer"
+
+    start_image: bpy.props.StringProperty(
+        name="Start image", options={"SKIP_SAVE"}, description="First frame, an image file; empty: the panel's choice",
+    )
+    end_image: bpy.props.StringProperty(
+        name="End image", options={"SKIP_SAVE"}, description="Last frame, an image file; empty: the panel's choice",
+    )
+    middle_images: bpy.props.StringProperty(
+        name="Middle images", options={"SKIP_SAVE"},
+        description='Ordered frames in between, as a JSON list of image files; empty: the panel\'s choice',
+    )
+
+    def keyframes(self, props):
+        """(end, middle) image paths: the operator's arguments first, else the panel's, each checked."""
+        end = self.end_image or props.video_end_path
+        if self.middle_images:
+            middle = json.loads(self.middle_images)
+            if isinstance(middle, str) or not all(isinstance(m, str) for m in middle):
+                raise ValueError("middle_images is a JSON list of image files")
+        else:
+            middle = [item.path for item in props.video_middle if item.path]
+        paths = [Path(bpy.path.abspath(p)) for p in ([end] if end else []) + middle]
+        missing = next((p for p in paths if not p.is_file()), None)
+        if missing is not None:
+            raise RuntimeError(f"No image file at {missing}")
+        return (paths[0] if end else None), (paths[1:] if end else paths)
 
     def execute(self, context):
         props = context.scene.free_plugin
@@ -185,7 +216,13 @@ class FREEPLUGIN_OT_generate_video(_Generate):
         if not prompt:
             return {"CANCELLED"}
         try:
-            start = self.input_image(props.video_source, "")
+            if self.start_image:
+                start = self.input_image("FILE", self.start_image)
+            else:
+                start = self.input_image(props.video_source, props.video_start_path)
+            end, middle = self.keyframes(props)
+            if (end or middle) and start is None:
+                raise RuntimeError("An end or middle image needs a start image (Start from: not Text only)")
             choice = self.choose(context, "video", start is not None)
         except (RuntimeError, ValueError) as error:
             self.report({"ERROR"}, str(error))
@@ -193,7 +230,8 @@ class FREEPLUGIN_OT_generate_video(_Generate):
         key, folder = prefs.fal_key(), prefs.output_dir("videos")
 
         def work(task):
-            return choice.run(task, key, "video", folder, prompt, prompt=prompt, images=[start] if start else [])
+            return choice.run(task, key, "video", folder, prompt, prompt=prompt, images=[start] if start else [],
+                              end=end, middle=middle)
 
         def done(task, path):
             scene.add_movie_strip(path)
@@ -832,6 +870,29 @@ class FREEPLUGIN_OT_open_outputs(bpy.types.Operator):
         return {"FINISHED"}
 
 
+class FREEPLUGIN_OT_video_middle_add(bpy.types.Operator):
+    bl_idname = "freeplugin.video_middle_add"
+    bl_label = "Add middle image"
+    bl_description = "Add an image the video passes through, after the ones above"
+
+    def execute(self, context):
+        context.scene.free_plugin.video_middle.add()
+        return {"FINISHED"}
+
+
+class FREEPLUGIN_OT_video_middle_remove(bpy.types.Operator):
+    bl_idname = "freeplugin.video_middle_remove"
+    bl_label = "Remove middle image"
+    bl_options = {"INTERNAL"}
+    index: bpy.props.IntProperty()
+
+    def execute(self, context):
+        middle = context.scene.free_plugin.video_middle
+        if 0 <= self.index < len(middle):
+            middle.remove(self.index)
+        return {"FINISHED"}
+
+
 class FREEPLUGIN_OT_clear_tasks(bpy.types.Operator):
     bl_idname = "freeplugin.clear_tasks"
     bl_label = "Clear finished"
@@ -845,6 +906,8 @@ classes = (
     FREEPLUGIN_OT_generate_image,
     FREEPLUGIN_OT_generate_texture,
     FREEPLUGIN_OT_generate_video,
+    FREEPLUGIN_OT_video_middle_add,
+    FREEPLUGIN_OT_video_middle_remove,
     FREEPLUGIN_OT_generate_3d,
     FREEPLUGIN_OT_load_model,
     FREEPLUGIN_OT_open_catalog,

@@ -21,6 +21,34 @@ def test_image_on_a_text_only_model_is_an_error():
         fal.build_payload({**SCHEMA, "image_field": None}, {}, image_uris=["data:a"])
 
 
+VIDEO = {"id": "kling", "prompt_field": "prompt", "image_field": "start_image_url", "image_list": False,
+         "end_field": "end_image_url", "middle_field": "middle_image_urls", "middle_max": 2, "fields": []}
+
+
+def test_end_and_middle_images_go_in_their_fields():
+    payload = fal.build_payload(VIDEO, {}, prompt="walk", image_uris=["data:a"], end_uri="data:c",
+                                middle_uris=["data:b1", "data:b2"])
+    assert payload == {"prompt": "walk", "start_image_url": "data:a", "end_image_url": "data:c",
+                       "middle_image_urls": ["data:b1", "data:b2"]}
+
+
+def test_end_or_middle_image_the_model_lacks_is_an_error():
+    with pytest.raises(ApiError, match="end image"):
+        fal.build_payload({**VIDEO, "end_field": None}, {}, image_uris=["data:a"], end_uri="data:c")
+    with pytest.raises(ApiError, match="middle images"):
+        fal.build_payload({**VIDEO, "middle_field": None}, {}, image_uris=["data:a"], middle_uris=["data:b"])
+    # Schemas cached before these keys existed behave like a model without them.
+    with pytest.raises(ApiError, match="end image"):
+        fal.build_payload(SCHEMA, {}, image_uris=["data:a"], end_uri="data:c")
+
+
+def test_too_many_middle_images_or_no_start_image_is_an_error():
+    with pytest.raises(ApiError, match="at most 2"):
+        fal.build_payload(VIDEO, {}, image_uris=["data:a"], middle_uris=["data:b"] * 3)
+    with pytest.raises(ApiError, match="start image"):
+        fal.build_payload(VIDEO, {}, end_uri="data:c")
+
+
 def test_square_options_uses_whatever_the_model_calls_it():
     assert fal.square_options(SCHEMA, {})["image_size"] == "square_hd"
     ratio = {"fields": [{"name": "aspect_ratio", "options": ["16:9", "1:1"]}]}

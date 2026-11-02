@@ -12,7 +12,7 @@ from pathlib import Path
 
 import bpy
 
-from . import account, animation, api_models, chat, library, params, prefs, presets, tasks, ui_controls
+from . import account, animation, api_models, catalog, chat, library, params, prefs, presets, tasks, ui_controls
 
 _ROLE_ICONS = {"user": "USER", "assistant": "LIGHT_SUN", "tool": "TOOL_SETTINGS", "error": "ERROR", "info": "INFO"}
 _TASK_ICONS = {"running": "SORTTIME", "done": "CHECKMARK", "error": "ERROR"}
@@ -200,6 +200,30 @@ def _draw_chat(layout, context):
     row = layout.row(align=True)
     row.operator("freeplugin.chat_transcript", text="Transcript", icon="FILE_TEXT")
     row.operator("freeplugin.chat_reset", text="New", icon="ADD")
+
+
+def _draw_video_keyframes(layout, scene):
+    """Start, end and middle images, each shown only when the chosen model takes it."""
+    props = scene.free_plugin
+    if props.video_source == "FILE":
+        layout.prop(props, "video_start_path", text="Start")
+    if props.video_source == "TEXT":
+        return
+    endpoint = params.active_endpoint(scene, "video")[1]
+    schema = catalog.cached_schema(endpoint) if endpoint else None
+    if not schema:
+        return
+    if schema.get("end_field"):
+        layout.prop(props, "video_end_path", text="End")
+    if schema.get("middle_field"):
+        most = schema.get("middle_max")
+        for index, item in enumerate(props.video_middle):
+            row = layout.row(align=True)
+            row.prop(item, "path", text=f"Middle {index + 1}")
+            row.operator("freeplugin.video_middle_remove", text="", icon="X").index = index
+        row = layout.row()
+        row.enabled = most is None or len(props.video_middle) < most
+        row.operator("freeplugin.video_middle_add", icon="ADD")
 
 
 def _draw_animation(layout, context):
@@ -404,6 +428,7 @@ class FREEPLUGIN_PT_main(bpy.types.Panel):
                                      lambda box: ui_controls.draw_settings(box, context.scene, "video"))
                     body.prop(props, "video_prompt", text="")
                     body.prop(props, "video_source")
+                    _draw_video_keyframes(body, context.scene)
                     body.operator("freeplugin.generate_video", icon="PLAY")
 
         elif tab == "ANIM":
