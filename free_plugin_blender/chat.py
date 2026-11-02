@@ -137,10 +137,12 @@ _STYLE = "Answer in the user's language, briefly: say what you did, not how."
 
 def _external_prompt() -> str:
     return f"""Several Blender windows can be open and the `{MCP_SERVER}` MCP tools reach whichever one owns the MCP
-port. At the start of every turn, before changing anything with them, run
-`bpy.context.window_manager.get("free_plugin_instance")` and check it equals "{INSTANCE}". If it
-does not, change nothing and tell the user the MCP is connected to another Blender window (close the
-other one or give each its own MCP port).
+port. Each user message ends with "[Blender id: …]", the id of the window the user is typing in. It
+changes every time Blender starts, so only the id in the latest message counts: ignore ids from
+earlier messages or earlier instructions. At the start of every turn, before changing anything with
+these tools, run `bpy.context.window_manager.get("free_plugin_instance")` and check it equals that
+id. If it does not, change nothing and tell the user the MCP is connected to another Blender window
+(close the other one or give each its own MCP port).
 
 The "Free Plugin Blender" add-on is installed. From Python you can call its operators:
 - bpy.ops.freeplugin.generate_image(prompt=..., model=<key or fal id>, options='<json>')
@@ -248,6 +250,10 @@ def send(text: str, scene, note: str = "", images=()) -> str | None:
     settings = prefs.get()
     command += claude_models.cli_arguments(settings.chat_model, settings.chat_effort)
     prompt = f"{text}\n\n{note}" if note else text
+    if MCP_SERVER in servers:
+        # Per message, not in the system prompt: a resumed conversation keeps the instructions
+        # of its first turn, so an id written there would go stale when Blender restarts.
+        prompt += f"\n\n[Blender id: {INSTANCE}]"
     if images:  # images only travel in the JSON input format
         command += ["--input-format", "stream-json"]
         prompt = attach.claude_stdin(prompt, images)

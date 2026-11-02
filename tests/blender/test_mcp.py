@@ -171,8 +171,10 @@ result = len(kiln.scene_summary().splitlines())
             own = servers["free_plugin"]
             harness.check(f"{mode}: HTTP entry with the token", own["type"] == "http" and own["url"] == server.url
                           and own["headers"]["Authorization"] == f"Bearer {token}", own)
-        harness.check(f"{mode}: instance check only with mcp-for-blender",
-                      (chat.INSTANCE in prompt) == ("blender" in servers))
+        stdin = json.loads((STATE / "last_call.json").read_text())["stdin"]
+        harness.check(f"{mode}: instance id in the message only with mcp-for-blender",
+                      (f"[Blender id: {chat.INSTANCE}]" in stdin) == ("blender" in servers)
+                      and chat.INSTANCE not in prompt)
     harness.check("OWN prompt is shorter", len(chat.system_prompt({"free_plugin": {}}))
                   < len(chat.system_prompt({"blender": {}})) / 2)
     harness.check("server stops when no longer used", mcp.state.server is None)
