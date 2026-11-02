@@ -18,6 +18,9 @@ OPENAPI_URL = "https://fal.ai/api/openapi/queue/openapi.json?endpoint_id={}"
 # Handled by the plugin itself, never shown as options.
 _HIDDEN = {"sync_mode", "enable_safety_checker", "num_images", "max_images", "prompt"}
 _IMAGE_ROLE_PREFERENCE = ("image_urls", "image_url", "start_image_url", "input_image_url")
+# Video keyframes besides the first one, in the names fal's models use.
+_END_ROLE = ("end_image_url", "tail_image_url", "last_image_url", "last_frame_url")
+_MIDDLE_ROLE = ("middle_image_urls",)
 
 
 def safe_name(endpoint_id: str) -> str:
@@ -90,10 +93,19 @@ def extract(endpoint_id: str, openapi: dict) -> dict:
     if image_field is None:
         image_field = next((n for n in image_fields if n in required), image_fields[0] if image_fields else None)
     fields = [f for n in order if n in properties and n not in _HIDDEN and (f := _field(n, properties[n]))]
-    return {
+    end_field = next((n for n in _END_ROLE if n in properties and n != image_field
+                      and _flatten(properties[n]).get("type") == "string"), None)
+    middle_field = next((n for n in _MIDDLE_ROLE if n in properties
+                         and _flatten(properties[n]).get("type") == "array"), None)
+    extracted = {
         "id": endpoint_id,
         "prompt_field": "prompt" if "prompt" in properties else None,
         "image_field": image_field,
         "image_list": bool(image_field) and _flatten(properties[image_field]).get("type") == "array",
+        "end_field": end_field,
+        "middle_field": middle_field,
         "fields": fields,
     }
+    if middle_field and "maxItems" in _flatten(properties[middle_field]):
+        extracted["middle_max"] = _flatten(properties[middle_field])["maxItems"]
+    return extracted

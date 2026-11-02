@@ -3,6 +3,8 @@
  "prompt_field": "prompt",
  "image_field": "image_url",
  "image_list": false,
+ "end_field": null,
+ "middle_field": null,
  "fields": [
   {
    "name": "duration",

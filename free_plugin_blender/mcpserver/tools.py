@@ -354,11 +354,17 @@ GENERATE_KINDS = ("image", "material", "model3d", "video", "rig", "retexture", "
 
 
 def generate(kind, prompt="", model="", options="", object="", preset_id=-1, duration=0.0,  # noqa: A002
-             wait=120):
+             wait=120, start_image="", end_image="", middle_images=()):
     if kind not in GENERATE_KINDS:
         raise ToolError(f"kind must be one of {', '.join(GENERATE_KINDS)}")
     if options and not isinstance(options, str):
         options = json.dumps(options)
+    if (start_image or end_image or middle_images) and kind != "video":
+        raise ToolError("start_image, end_image and middle_images are for kind=video")
+    if isinstance(middle_images, str):
+        middle_images = [middle_images] if middle_images else []
+    keyframes = {"start_image": start_image, "end_image": end_image,
+                 "middle_images": json.dumps(list(middle_images)) if middle_images else ""}
 
     def start():
         if object:
@@ -373,7 +379,7 @@ def generate(kind, prompt="", model="", options="", object="", preset_id=-1, dur
             "image": lambda: ops.generate_image(**common),
             "material": lambda: ops.generate_texture(**common),
             "model3d": lambda: ops.generate_3d(**common),
-            "video": lambda: ops.generate_video(**common),
+            "video": lambda: ops.generate_video(**common, **keyframes),
             "rig": lambda: ops.rig(),
             "retexture": lambda: ops.retexture(prompt=prompt),
             "motion": lambda: ops.generate_motion(prompt=prompt, duration=duration, model=model),
@@ -455,7 +461,11 @@ def build():
              {"kind": {"type": "string", "enum": list(GENERATE_KINDS)}, "prompt": s,
               "model": {**s, "description": "catalog key or fal.ai id"},
               "options": {**s, "description": "model options as JSON"}, "object": s, "preset_id": i,
-              "duration": n, "wait": i}, ["kind"], run=generate, main_thread=False),
+              "duration": n, "wait": i,
+              "start_image": {**s, "description": "video: first frame, image file"},
+              "end_image": {**s, "description": "video: last frame (models that take one)"},
+              "middle_images": {"type": "array", "items": s, "description": "video: frames in between, in order"}},
+             ["kind"], run=generate, main_thread=False),
         Tool("find_presets", "Search the 678 Meshy animation presets (for generate kind=preset).",
              {"query": s, "category": {"type": "string", "enum": [k for k, _ in presets.CATEGORIES]},
               "in_place": b}, run=find_presets, main_thread=False),

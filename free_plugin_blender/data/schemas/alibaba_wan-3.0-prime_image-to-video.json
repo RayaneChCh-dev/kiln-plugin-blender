@@ -3,6 +3,8 @@
  "prompt_field": "prompt",
  "image_field": "start_image_url",
  "image_list": false,
+ "end_field": "end_image_url",
+ "middle_field": null,
  "fields": [
   {
    "name": "resolution",

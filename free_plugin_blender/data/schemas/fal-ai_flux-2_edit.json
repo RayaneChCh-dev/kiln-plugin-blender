@@ -3,6 +3,8 @@
  "prompt_field": "prompt",
  "image_field": "image_urls",
  "image_list": true,
+ "end_field": null,
+ "middle_field": null,
  "fields": [
   {
    "name": "guidance_scale",

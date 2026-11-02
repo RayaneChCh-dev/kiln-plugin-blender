@@ -40,7 +40,21 @@ def test_kling_image_field_and_enum_default():
     by_name = fields(schema)
     assert by_name["duration"]["default"] == "5"
     assert "end_image_url" not in by_name  # extra file inputs are not options
+    assert schema["end_field"] == "end_image_url" and schema["middle_field"] is None
     assert by_name["cfg_scale"]["kind"] == "FLOAT" and by_name["cfg_scale"]["maximum"] == 1
+
+
+def test_kling4_takes_end_and_middle_images():
+    schema = fal_schema.extract("x", load("kling_v4_image-to-video"))
+    assert schema["image_field"] == "start_image_url"
+    assert schema["end_field"] == "end_image_url"
+    assert schema["middle_field"] == "middle_image_urls" and schema["middle_max"] == 8
+    assert not {"end_image_url", "middle_image_urls"} & set(fields(schema))
+
+
+def test_models_without_keyframes_have_no_end_or_middle_field():
+    schema = fal_schema.extract("x", load("fal-ai_bytedance_seedream_v4.5_edit"))
+    assert schema["end_field"] is None and schema["middle_field"] is None and "middle_max" not in schema
 
 
 def test_hunyuan_input_image_field_and_int_range():
