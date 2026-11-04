@@ -15,13 +15,11 @@ also makes them callable from an MCP client:
 from __future__ import annotations
 
 import json
-import re
-import time
 from pathlib import Path
 
 import bpy
 
-from . import account, catalog, chat, controls, library, net, prefs, scene, tasks, ui_controls
+from . import account, catalog, chat, controls, library, naming, net, prefs, scene, tasks, ui_controls
 from .providers import fal, meshy, polyhaven
 
 TEXTURE_PROMPT = ("Seamless tileable PBR albedo texture of {}, flat even lighting, "
@@ -29,8 +27,8 @@ TEXTURE_PROMPT = ("Seamless tileable PBR albedo texture of {}, flat even lightin
 
 
 def _stamp(prompt, ext):
-    slug = re.sub(r"[^a-z0-9]+", "-", prompt.lower()).strip("-")[:40] or "result"
-    return f"{time.strftime('%Y%m%d-%H%M%S')}-{slug}.{ext}"
+    """A file name no other output gets (see `naming.stamp`)."""
+    return naming.stamp(prompt, ext)
 
 
 class _ModelChoice:

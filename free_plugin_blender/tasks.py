@@ -20,6 +20,8 @@ import traceback
 
 import bpy
 
+from . import naming
+
 _main_thread_queue: queue.SimpleQueue = queue.SimpleQueue()
 TASKS: list["Task"] = []
 _MAX_TASKS = 20
@@ -27,7 +29,7 @@ _MAX_TASKS = 20
 
 class Task:
     def __init__(self, label):
-        self.id = f"{int(time.time() * 1000):x}"
+        self.id = naming.task_id()
         self.label = label
         self.state = "running"
         self.detail = "starting…"
