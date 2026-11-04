@@ -43,7 +43,7 @@ def test():
     harness.wait()
     model, body = last_call()
     harness.check("render sent as the image", model.endswith("/edit") and body.get("image_urls"), body.keys())
-    renders = list(harness.module(".prefs").output_dir("captures").glob("*-render.png"))
+    renders = list(harness.module(".prefs").output_dir("captures").glob("*-render-*.png"))
     harness.check("render saved in captures", len(renders) == 1, renders)
     image = bpy.data.images.load(str(renders[0]))
     harness.check("full render at the scene resolution", tuple(image.size) == (160, 90), tuple(image.size))

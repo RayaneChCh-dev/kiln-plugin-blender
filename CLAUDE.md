@@ -25,7 +25,7 @@ may be listening there.
 ## Conventions
 
 - Modules under `providers/`, `catalog.py`, `overlay/field.py`, `overlay/richtext.py`,
-  `overlay/thread.py`, `presets.py`, `rigmap.py`,
+  `overlay/thread.py`, `presets.py`, `rigmap.py`, `naming.py`, `net.py`,
   `agent.py`, `attach.py`, `library.py`, `mcpserver/protocol.py`, `mcpserver/httpserver.py` and
   `mcpserver/script.py` must not import bpy.
 - Network calls run on worker threads (`tasks.run`); scene changes run on the main thread.

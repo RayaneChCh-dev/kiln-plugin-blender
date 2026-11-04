@@ -9,6 +9,8 @@ import urllib.error
 import urllib.request
 from pathlib import Path
 
+from . import naming
+
 USER_AGENT = "free-plugin-blender/0.1"
 
 
@@ -37,7 +39,8 @@ def request_json(method, url, *, headers=None, body=None, timeout=60):
 
 
 def download(url, dest: Path, timeout=300) -> Path:
-    dest.parent.mkdir(parents=True, exist_ok=True)
+    """Save `url` to `dest`, or to `<stem>-2`… if `dest` exists: never overwrites. Returns the path."""
+    dest = naming.claim(dest)
     if url.startswith("data:"):
         dest.write_bytes(base64.b64decode(url.split(",", 1)[1]))
         return dest
